@@ -1,0 +1,39 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text full-width">
+            <a href="#/user/{{model.user._id}}/website/{{model.website._id}}/page/{{model.page._id}}/widget"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">Widget Edit</b>
+            <a ng-click="model.updateWidget(model.widget._id, model.widget)"
+               href= ""
+               class="navbar-link pull-right ">
+                <span class="glyphicon glyphicon-ok text-white right-padding"></span>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div ng-show="model.alert" class="alert alert-danger" role="alert">
+        {{model.alert}}
+    </div>
+    <form>
+        <div class="form-group top-padding">
+            <label for="Name">Name</label>
+            <input ng-model="model.widget.name"
+                   class="form-control" type="text" id="Name" placeholder="Widget Name">
+            <label for="Text">Text</label>
+            <input ng-model="model.widget.text"
+                   class="form-control" type="text" id="Text" placeholder="Widget Text">
+            <label for="URL">URL</label>
+            <input ng-model="model.widget.url"
+                   class="form-control" type="URL" id="URL" placeholder="https://abc.xyz.com/">
+            <label for="Width">Width</label>
+            <input ng-model="model.widget.width"
+                   class="form-control" type="text" id="Width" placeholder="Width">
+
+            <a class="btn btn-danger  btn-block" ng-click="model.deleteWidget(model.widget._id)">Delete</a>
+        </div>
+    </form>
+</div>
