@@ -1,0 +1,78 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="row container-fluid text-blue">
+        <div class="col-sm-4 hidden-xs">
+            <div class="navbar-text pull-left no-left-margin">
+                <a  ng-href="#/user/{{model.user._id}}/website">
+                    <span class="glyphicon glyphicon-chevron-left text-white"></span>
+                </a>
+            </div>
+            <div class="navbar-header">
+                <div class="navbar-brand text-white">
+                    <b class="text-white"> Websites</b>
+                </div>
+            </div>
+            <div class="navbar-text pull-right margin-right-30">
+                <a ng-href="#/user/{{model.user._id}}/website/new">
+                    <span class="glyphicon glyphicon-plus text-white"></span>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-8 col-xs-12">
+            <a ng-href="#/user/{{model.user._id}}/website/new"
+               class="navbar-brand text-white">
+                <b class="text-white">New Website</b>
+            </a>
+            <div class = "pull-right">
+                <p class="navbar-text no-right-margin">
+                    <a ng-click="model.createWebsite(model.website.name, model.website.description)"
+                       class="pull-right" href="">
+                        <span class="glyphicon glyphicon-ok text-white"></span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="row container-fluid">
+    <div class="col-xs-4 hidden-xs vertical-line">
+        <div class = "top-padding">
+            <div ng-show="model.alert" class="alert alert-danger" role="alert">
+                {{model.alert}}
+            </div>
+            <div ng-repeat="website in model.websites">
+                <p class="bottom-padding left-padding">
+                    <a ng-href="#/user/{{website.developerId}}/website/{{website._id}}/page">{{website.name}}</a>
+                    <a ng-href="#/user/{{website.developerId}}/website/{{website._id}}">
+                        <span class="glyphicon glyphicon-cog pull-right right-padding"></span>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-8">
+        <form>
+            <div class="form-group top-padding">
+                <label for="Name">Name</label>
+                <input ng-model="model.website.name"
+                       class="form-control bottom-padding"
+                       type="text" id="Name" placeholder="Name">
+                <label for="Description" >Description</label>
+                <textarea ng-model="model.website.description"
+                          class="form-control" rows="5"
+                          id="Description" placeholder="Description">
+                </textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text pull-right">
+            <a  ng-href="#/user/{{model.user._id}}"
+                class="navbar-link">
+                <span class="glyphicon glyphicon-user text-white"></span>
+            </a>
+        </p>
+    </div>
+</nav>

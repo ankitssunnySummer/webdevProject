@@ -1,0 +1,38 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text full-width">
+            <a ng-href="#/user/{{model.user._id}}/website"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">Pages</b>
+            <a ng-href="#/user/{{model.user._id}}/website/{{model.website._id}}/page/new"
+               class="navbar-link pull-right " href = "">
+                <span class="glyphicon glyphicon-plus text-white right-padding"></span>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid ">
+    <div class="top-padding">
+        <div ng-repeat="page in model.pages">
+            <p class="bottom-padding left-padding">
+                <a ng-href="#/user/{{model.user._id}}/website/{{page._website}}/page/{{page._id}}/widget">{{page.name}}</a>
+                <a ng-href="#/user/{{model.user._id}}/website/{{page._website}}/page/{{page._id}}">
+                    <span class="glyphicon glyphicon-cog pull-right right-padding"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid  text-blue">
+        <div class="pull-right">
+            <p class="navbar-text no-right-padding ">
+                <a ng-href="#/user/{{model.user._id}}">
+                    <span class="glyphicon glyphicon-user text-white right-padding"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+</nav>

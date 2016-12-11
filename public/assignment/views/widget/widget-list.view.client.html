@@ -1,0 +1,93 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text full-width">
+            <a ng-href="#/user/{{model.user._id}}/website/{{model.website._id}}/page"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">Widgets</b>
+            <a ng-href="#/user/{{model.user._id}}/website/{{model.website._id}}/page/{{model.page._id}}/widget/new"
+               class="navbar-link pull-right ">
+                <span class="glyphicon glyphicon-plus text-white right-padding"></span>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid navbar-text top-padding ">
+    <wam-sortable>
+        <div ng-switch = "widget.type" ng-repeat="widget in model.widgets">
+            <div ng-if="widget.type">
+                <div class="bottom-padding relative-position">
+                    <div class="container-fluid no-right-padding">
+
+                        <div ng-switch="widget.size" ng-switch-when="HEADER">
+                            <h1 ng-switch-when="1">{{widget.text}}</h1>
+                            <h2 ng-switch-when="2">{{widget.text}}</h2>
+                            <h3 ng-switch-when="3">{{widget.text}}</h3>
+                            <h4 ng-switch-when="4">{{widget.text}}</h4>
+                            <h5 ng-switch-when="5">{{widget.text}}</h5>
+                            <h6 ng-switch-when="6">{{widget.text}}</h6>
+                        </div>
+
+                        <div ng-switch-when="YOUTUBE" class="youtube-widget">
+                            <iframe width="560" height="315"
+                                    ng-src="{{model.checkSafeYouTube(widget.url)}}"
+                                    frameborder="0" allowfullscreen></iframe>
+                        </div>
+
+                        <div ng-switch-when="IMAGE">
+                            <img class="img-responsive" ng-src="{{model.checkSafeImage(widget.url)}}">
+                        </div>
+
+                        <div ng-switch-when="HTML" ng-bind-html="model.checkSafeHtml(widget.text)">
+                        </div>
+
+                        <div ng-switch-when="TEXT">
+
+                            <div ng-if="widget.formatted">
+                                <div ng-model ="model.widget.text"
+                                     text-angular
+                                     ta-toolbar ="[['h1','h2','h3'],['bold','italics','underline','strikeThrough'],
+['ul','ol'],['justifyLeft','justifyCenter','justifyRight','justifyFull'],
+['indent','outdent'],['html']]"
+                                     ta-toolbar-class="btn-toolbar"
+                                     ta-toolbar-group-class="btn-group"
+                                     ta-toolbar-button-class="btn btn-default"
+                                     ta-toolbar-active-button-class="active">
+                                </div>
+                            </div>
+
+                            <div ng-if="!widget.formatted && (!widget.rows || widget.rows===1)">
+                                <input placeholder="{{widget.placeholder}}" class="form-control"/>
+                            </div>
+
+                            <textarea ng-if="!widget.formatted && (widget.rows > 1)"
+                                      rows="{{widget.rows}}" placeholder="{{widget.placeholder}}"
+                                      class="form-control">{{widget.text}}
+                            </textarea>
+                        </div>
+
+                        <div class="absolute-position float-items no-right-padding">
+                            <a ng-href="#/user/{{model.user._id}}/website/{{model.website._id}}/page/{{model.page._id}}/{{widget._id}}">
+                                <span class="glyphicon glyphicon-cog"></span></a>
+                            <span class="glyphicon glyphicon-menu-hamburger"></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </wam-sortable>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid  text-blue">
+        <div class="pull-right">
+            <p class="navbar-text no-right-padding ">
+                <a ng-href="#/user/{{model.user._id}}">
+                    <span class="glyphicon glyphicon-user text-white right-padding"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+</nav>
