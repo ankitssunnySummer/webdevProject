@@ -1,46 +1,18 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "web-dev",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
-  "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
-  ],
-  "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url": "http://www.openshift.com/"
-  },
-  "homepage": "http://www.openshift.com/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/openshift/origin-server"
-  },
-  "engines": {
-    "node": ">= 0.6.0",
-    "npm": ">= 1.0.0"
-  },
- "dependencies": {
-    "angular": "^1.5.8",
-    "bcrypt-nodejs": "0.0.3",
+  "description": "Web Dev at Northeastern University",
+  "main": "server.js",
+  "dependencies": {
     "body-parser": "^1.15.1",
-    "bootstrap": "^3.3.7",
-    "cookie-parser": "^1.4.3",
     "express": "^4.13.4",
-    "express-session": "^1.14.2",
-    "font-awesome": "^4.7.0",
-    "mongoose": "^4.6.6",
-    "multer": "^1.2.0",
-    "passport": "^0.3.2",
-    "passport-facebook": "^2.1.1",
-    "passport-local": "^1.0.0",
-    "rangy": "^1.3.0",
-    "textangular": "^1.5.13"
+    "mongoose": "^4.4.15"
   },
   "devDependencies": {},
-  "bundleDependencies": [],
-  "private": true,
-  "main": "server.js"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Jose G. Annunziato",
+  "license": "ISC"
 }
