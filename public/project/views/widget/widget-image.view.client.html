@@ -1,0 +1,53 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text full-width">
+            <a href="#/user/{{model.user._id}}/website/{{model.website._id}}/page/{{model.page._id}}/widget"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">Widget Edit</b>
+            <a ng-click="model.updateWidget(model.widget._id, model.widget)"
+               href= ""
+               class="navbar-link pull-right ">
+                <span class="glyphicon glyphicon-ok text-white right-padding"></span>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div ng-show="model.alert" class="alert alert-danger" role="alert">
+        {{model.alert}}
+    </div>
+    <form action="/api/upload" method="post" enctype="multipart/form-data">
+        <div class="form-group top-padding">
+            <label for="Name">Name</label>
+            <input ng-model="model.widget.name"
+                   class="form-control" type="text"
+                   id="Name" placeholder="Widget Name">
+            <label for="Text">Text</label>
+            <input ng-model="model.widget.text"
+                   class="form-control" type="text"
+                   id="Text" placeholder="Widget Text">
+            <label for="URL">URL</label>
+            <input ng-model="model.widget.url"
+                   class="form-control" type="URL"
+                   id="URL" placeholder="http://abc.xyz.com/image">
+            <label for="Width">Width</label>
+            <input ng-model="model.widget.width"
+                   class="form-control" type="number"
+                   id="Width" placeholder="100%">
+            <input  name="width"    value="{{model.widget.width}}" class= "displayNone"/>
+            <input  name="widgetId" value="{{model.widget._id}}" class= "displayNone"/>
+            <input  name="userId" value="{{model.userId}}" class= "displayNone"/>
+            <input  name="websiteId" value="{{model.websiteId}}" class= "displayNone"/>
+            <input  name="pageId" value="{{model.pageId}}" class= "displayNone"/>
+            <label for="Upload">Upload</label>
+            <input name="uploadedFile"
+                   class="form-control"
+                   type="file" id="Upload">
+            <button type="submit" class="btn btn-block btn-primary">Upload Image</button>
+            <a ng-click="model.deleteWidget(model.widget._id)"
+               class="btn btn-danger  btn-block">Delete</a>
+        </div>
+    </form>
+</div>

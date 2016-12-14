@@ -1,0 +1,73 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <a class="navbar-brand no-left-padding">
+            <b class="text-white">Profile</b>
+        </a>
+        <p class="navbar-text pull-right" >
+            <a  ng-click="model.updateProfile()"
+                href=""
+                class="navbar-link">
+                <span class="glyphicon glyphicon-ok text-white">
+                </span>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid">
+    <form action="/api/imageUpload" method="post" enctype="multipart/form-data">
+        <div ng-show="model.alert" class="alert alert-danger" role="alert">
+            {{model.alert}}
+        </div>
+        <div class="form-group">
+            <label class="top-padding" for="username">Username</label>
+            <input  ng-model="model.user.username"
+                    type="text" class="form-control"
+                    id="username" placeholder="Username">
+            <label for="email">Email address</label>
+            <input  ng-model="model.user.email"
+                    type="email" class="form-control"
+                    id="email" placeholder="alice@wonderland.com">
+            <label for="first-name">First Name</label>
+            <input  ng-model="model.user.firstName"
+                    type="text" class="form-control"
+                    id="first-name" placeholder="Alice">
+            <label for="last-name">Last Name</label>
+            <input  ng-model="model.user.lastName"
+                    type="text" class="form-control"
+                    id="last-name" placeholder="Wonderland">
+            <label for="phone">Phone Number</label>
+            <input  ng-model="model.user.phone"
+                    type="text" class="form-control"
+                    id="phone" placeholder="111-222-3333">
+            <label for="profile">Image URL</label>
+            <input  ng-model="model.user.profilePic"
+                    type="text" class="form-control"
+                    id="profile" placeholder="Image">
+
+            <input  name="userId" value="{{model.user._id}}" class= "displayNone"/>
+            <label for="Upload">Upload</label>
+            <input name="uploadedFile"
+                   class="form-control"
+                   type="file" id="Upload">
+            <button type="submit" class="btn btn-block btn-primary">Upload Image</button>
+
+
+
+            <a ng-click="model.deleteUser()"
+               class="btn btn-danger btn-block top-padding">Delete Profile</a>
+
+
+
+        </div>
+    </form>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text pull-right">
+            <a ng-href="#/user/{{model.user._id}}" class="navbar-link">
+                <span class="glyphicon glyphicon-user text-white">
+                </span>
+            </a>
+        </p>
+    </div>
+</nav>

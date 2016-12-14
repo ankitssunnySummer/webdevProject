@@ -10,7 +10,10 @@ module.exports = function() {
         lastName: String,
         email: String,
         phone: String,
+        profilePic: String,
+        gender: {type: String, default: 'Neutral'},
         websites: [{type: mongoose.Schema.ObjectId, ref: 'WebsiteModel'}],
+        friends: [{type: mongoose.Schema.ObjectId, ref: 'UserModel'}],
         dateCreated: Date,
         facebook: {
             id:    String,

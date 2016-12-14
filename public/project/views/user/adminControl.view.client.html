@@ -1,0 +1,49 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text full-width">
+            <b class="left-padding text-white">Control Center</b>
+            <a ng-href="#/adminRegister"
+               class="navbar-link pull-right" href = "">
+                <b class="pull-left right-padding text-white">Add Admin</b>
+            </a>
+        </p>
+    </div>
+</nav>
+<div class="container-fluid ">
+    <div class="top-padding">
+        <div ng-repeat="user in model.users">
+            <table class="top-padding table table-striped">
+                <thead>
+                <tr>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>username</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{user.firstName}}</td>
+                    <td>{{user.lastName}}</td>
+                    <td>{{user.username}}</td>
+                    <td>
+                        <a ng-click="model.deleteUser(user._id)"
+                           class="btn btn-danger btn-block">Delete User</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid  text-blue">
+        <div class="pull-right">
+            <p class="navbar-text no-right-padding ">
+                <a ng-href="#/admin/{{model.aId}}">
+                    <span class="glyphicon glyphicon-user text-white right-padding"></span>
+                </a>
+            </p>
+        </div>
+    </div>
+</nav>

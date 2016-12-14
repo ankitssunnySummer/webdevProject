@@ -2,8 +2,21 @@
  * Created by Ankit on 10/30/2016.
  */
 module.exports = function (app, models) {
+    var mime = require('mime');
     var multer = require('multer');
-    var upload = multer({ dest: __dirname+'/../uploads' });
+
+    var storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, __dirname+'/../../public/uploads')
+        },
+        filename: function (req, file, cb) {
+            cb(null, file.fieldname + '-' + Date.now() + '.' + mime.extension(file.mimetype));
+        }
+    });
+
+    var upload = multer({ storage: storage });
+
+    //var upload = multer({ dest: __dirname+'/../uploads' });
 
     var WidgetModel = models.WidgetModel;
     var PageModel = models.PageModel;
@@ -98,11 +111,12 @@ module.exports = function (app, models) {
         var pageId        = req.body.pageId;
         var myFile        = req.file;
         var originalname  = myFile.originalname; // file name on user's computer
-        var filename      = myFile.filename + ".jpg";     // new file name in upload folder
-        var path          = myFile.path + ".jpg";         // full path of uploaded file
+        var filename      = myFile.filename ;     // new file name in upload folder
+        var path          = myFile.path;         // full path of uploaded file
         var destination   = myFile.destination;  // folder where file is saved to
         var size          = myFile.size;
         var mimetype      = myFile.mimetype;
+
 
         WidgetModel
             .findWidgetById(widgetId)
@@ -110,12 +124,7 @@ module.exports = function (app, models) {
                 function (widgetfound) {
                     widget = widgetfound;
                     // now setting the url of this widget to be the file name that was created
-                    widget.url = path;
-                    console.log("Full path: "+path);
-                    console.log("Original Name: " +originalname);
-                    console.log("New file name: " +filename);
-                    console.log("Destination: " + destination);
-                    console.log("Widget: " +widget);
+                    widget.url = '/uploads/'+filename;
 
                     // Now we need to update this widget in the database.
 
@@ -123,7 +132,7 @@ module.exports = function (app, models) {
                         .updateWidget(widgetId, widget)
                         .then(
                             function (updatedWidget) {
-                                resp.redirect('../assignment/#/user/'+userId+'/website/'+websiteId+'/page/'+pageId+'/widget/');
+                                resp.redirect('../project/#/user/'+userId+'/website/'+websiteId+'/page/'+pageId+'/widget/');
                             },
                             function (error) {
                                 console.log("Error while updating widget: " + error);
@@ -133,9 +142,5 @@ module.exports = function (app, models) {
                 function (error) {
                     console.log("Error while uploading image: " + error);
                 });
-
-
-
-
     }
 };

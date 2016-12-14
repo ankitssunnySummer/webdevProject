@@ -14,10 +14,11 @@ module.exports = function() {
         findUserByCredentials    : findUserByCredentials,
         updateUser               : updateUser,
         deleteUser               : deleteUser,
-        findUserByFacebookId     : findUserByFacebookId
+        findUserByFacebookId     : findUserByFacebookId,
+        findAllUsers             : findAllUsers
     };
     return api;
-    
+
     function findUserByFacebookId(facebookId) {
         return UserModel.findOne({'facebook.id': facebookId});
     }
@@ -40,17 +41,22 @@ module.exports = function() {
     }
 
     function updateUser(userId, user) {
-        return UserModel.update({_id: userId}, {
+        return UserModel.findOneAndUpdate({_id: userId}, {
             username    : user.username,
             password    : user.password,
             firstName   : user.firstName,
             lastName    : user.lastName,
             email       : user.email,
-            phone       : user.phone
+            phone       : user.phone,
+            profilePic   : user.profilePic
         })
     }
 
     function deleteUser(userId) {
         return UserModel.remove({_id: userId});
+    }
+
+    function findAllUsers() {
+        return UserModel.find({});
     }
 };

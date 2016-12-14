@@ -1,0 +1,103 @@
+<nav class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
+    <div class="container-fluid text-blue">
+        <a class="navbar-brand no-left-padding">
+            <b class="text-white left-padding">Home</b>
+        </a>
+        <p class="navbar-text pull-right" >
+            <a  ng-click="model.updateProfile()"
+                href=""
+                class="navbar-link">
+                <span class="glyphicon glyphicon-ok text-white">
+                </span>
+            </a>
+        </p>
+    </div>
+</nav>
+
+<div class="col-sm-3 col-xs-3 top-padding">
+    <div class="profile-userpic">
+        <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.user.profilePic)}}">
+    </div>
+    <div class="top-image-padding">
+        <p class="align-center  top-padding">
+            <strong>{{model.user.firstName}} {{model.user.lastName}}</strong>
+            <br>
+            <strong>{{model.user.username}}</strong>
+            <br>
+            <strong>{{model.user.email}}</strong>
+            <br>
+            <a ng-href="#/user/account/{{model.user._id}}"
+               class="btn btn-primary ">
+                <strong>Edit</strong>
+            </a>
+            <a ng-click="model.logout()"
+               class="btn btn-danger ">Logout</a>
+        </p>
+    </div>
+</div>
+
+<div class="top-padding col-sm-7 col-xs-9">
+    <div class="row">
+        <form action="form-control">
+            <div class="input-group">
+                <input  ng-model="model.searchTerm"
+                        type="text" class="form-control">
+                <input  name="term" value="{{model.searchTerm}}" class= "displayNone"/>
+                <span class="input-group-btn">
+                    <a ng-click="model.searchEBay(model.searchTerm)"
+                       class="btn btn-default" type="button">Search</a>
+                </span>
+                </input>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class = "top-padding">
+            <div ng-repeat="item in model.items">
+                <p class="bottom-padding left-padding">
+                <div class="row">
+                    <div class="col-xs-5">
+                        <a href = {{item.viewItemURL[0]}} target="_blank">
+                            <img ng-src="{{model.checkSafeImage(item.galleryURL[0])}}">
+                        </a>
+                    </div>
+                    <div class="col-xs-7">
+                        <ul class="list-group">
+                            <li class="list-group-item">{{item.title[0]}}</li>
+                            <li class="list-group-item">{{item.subtitle[0]}}</li>
+                            <li class="list-group-item">{{item.location[0]}}</li>
+                        </ul>
+                    </div>
+                </div>
+                <a ng-href="#/user/{{website._user}}/website/{{website._id}}/page">{{website.name}}</a>
+                <a ng-href="#/user/{{website._user}}/website/{{website._id}}">
+                    <span class="glyphicon glyphicon-cog pull-right right-padding"></span>
+                </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="top-padding col-sm-2 hidden-xs">
+    <div ng-repeat="user in model.users">
+        <div class="row">
+            <div class="profile-userpic-friend">
+                <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(user.profilePic)}}">
+                <strong>{{model.user.username}}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text pull-right">
+            <a ng-href="#/user/{{model.user._id}}" class="navbar-link">
+                <span class="glyphicon glyphicon-user text-white">
+                </span>
+            </a>
+        </p>
+    </div>
+</nav>
