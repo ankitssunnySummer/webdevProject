@@ -56,7 +56,6 @@
                 .addFriend(vm.user._id, vm.view._id)
                 .then(
                     function (success) {
-                        console.log(success);
                         $location.url('/user/' + vm.user._id + '/friend/' + vm.view._id);
                     },
                     function (err) {
@@ -87,25 +86,15 @@
 
     function FriendController($location, $routeParams, UserService, $sce) {
         var vm            = this;
-        var userId        = $routeParams["userId"];
-        var uId           = $routeParams["uid"];
+        var userId        = $routeParams["userId"];         // friends ID
+        var uId           = $routeParams["uid"];            // logged in user
         vm.checkSafeImage = checkSafeImage;
         vm.logout         = logout;
         vm.removeFriend   = removeFriend;
+        vm.userRelationship = userRelationship;
+        vm.friends;
         vm.view;
-
-
-        function removeFriend() {
-            UserService
-                .removeFriend(vm.user._id, vm.view._id)
-                .then(
-                    function (success) {
-                        $location.url('/user/' + vm.user._id);
-                    },
-                    function (err) {
-                        console.log("Some error occurred: " +err);
-                    }
-                )};
+        vm.friends = [];
 
         function init() {
             UserService
@@ -135,8 +124,79 @@
                 .error(function () {
                     console.log("Error while inside Profile Controller.")
                 });
+
+            var id = [];
+            UserService
+                .findAllFriends(userId)
+                .success(function (data) {
+                    for (var i =0; i < data[0].friends.length ; i++) {
+                        id[i] = data[0].friends[i];
+                    }
+                    console.log(id);
+                })
+                .error(function (err) {
+                    console.log("Error: " +err);
+                });
+
+            var arr= [];
+            for(var i=0; i < id.length; i++) {
+                console.log("Inside");
+                // for each ID find the user and add it to an object array
+                UserService
+                    .findUserById(id[i])
+                    .success(function (user) {
+                        arr[i] = user;
+                        console.log(arr[i])
+                        console.log(user);
+                        console.log("Hi");
+                    })
+                    .error(function (err) {
+                        console.log("Error" + err);
+                    })
+
+                console.log(arr);
+                vm.users = arr;
+
+
+            }
+
         }
         init();
+
+        function removeFriend() {
+            UserService
+                .removeFriend(vm.user._id, vm.view._id)
+                .then(
+                    function (success) {
+                        $location.url('/user/' + vm.user._id);
+                    },
+                    function (err) {
+                        console.log("Some error occurred: " +err);
+                    }
+                )};
+
+        function userRelationship(otherId) {
+            if(uId == otherId){
+                $location.url("/user/" + uId);
+            }
+            else {
+                UserService
+                    .findRelationShip(uId, otherId)
+                    .then(
+                        function (success) {
+                            // route to page which shows profile of users that are not friends
+                            if (success.data.length == 0) {
+                                $location.url("/user/" + uId + "/users/" + otherId);
+                            }
+                            // route to page for friends
+                            else {
+                                $location.url("/user/" + uId + "/friend/" + otherId);
+                            }},
+                        function (err) {
+                            console.log("Error occurred while finding relationship: " +err);
+                        });
+            }
+        }
 
         function checkSafeImage(url) {
             return $sce.trustAsResourceUrl(url);
@@ -156,9 +216,6 @@
         }
 
     }
-
-
-
 
     function LoginController($location, UserService) {
         var vm = this;  //vm stands for View Model.

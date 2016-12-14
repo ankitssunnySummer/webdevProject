@@ -15,6 +15,7 @@
             logout                : logout,
             register              : register,
             findAllUsers          : findAllUsers,
+            findAllFriends        : findAllFriends,
             addFriend             : addFriend,
             removeFriend          : removeFriend,
             searchEBay            : searchEBay,
@@ -60,6 +61,9 @@
             return $http.get('/api/allusers');
         }
 
+        function findAllFriends(userId) {
+           return $http.get('/api/allFriends/' + userId);
+        }
         function findUserByUsername(username) {
             return $http.get('/api/user?username=' + username);
         }

@@ -23,6 +23,7 @@ module.exports = function(app, models) {
     app.get("/api/user", findUser);
     app.get("/api/user/:uid", findUserById);
     app.get('/api/allusers', findAllUsersinDB);
+    app.get('/api/allFriends/:uid', findAllFriends);
     app.get("/api/ebayRequest/:searchTerm", searchEBay);
     app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
     app.get ('/api/loggedin', loggedin);
@@ -146,6 +147,26 @@ module.exports = function(app, models) {
             )
     }
 
+    function findAllFriends(req, resp) {
+        var userId = req.params.uid;
+
+        UserModel
+            .findUserById(userId)
+            .then(
+                function (user) {
+                    FriendModel
+                        .findAllFriends(user)
+                        .then(
+                            function (users) {
+                                resp.json(users)
+                            },
+                            function (err) {
+                                console.log("error: " +err);
+                            })},
+                function (err) {
+                    console.log("Error: " + err);
+                });
+    }
     function searchEBay(req, resp) {
         var searchTerm  = req.params.searchTerm;
         var url = "http://svcs.ebay.com/services/search/FindingService/v1";

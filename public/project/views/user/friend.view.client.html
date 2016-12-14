@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<div class="top-padding col-sm-7 col-xs-9">
+<div class="top-padding col-sm-7 col-xs-9 bottom-margin">
     <div class="row left-padding">
         <div class ="row left-padding">
             <div class="profile-userpic-visiting">
@@ -61,16 +61,16 @@
 </div>
 
 <div class=" col-sm-3 hidden-xs">
-    Instead of active Users, print all the friends of this User.
 
     <h3><strong>{{model.view.username}}</strong>'s Friends</h3>
-    <div ng-repeat="friend in model.friends">
+    <div ng-repeat="id in model.ids ">
         <div class="row left-padding">
             <div class="profile-userpic-friend">
-                <a ng-href="#/user/{{model.user._id}}/users/{{allUser._id}}">
-                    <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(allUser.profilePic)}}">
+                <a href=""
+                   ng-click="model.userRelationship(id)">
+                    <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(friend.profilePic)}}">
                 </a>
-                <strong class="left-padding">{{allUser.username}}</strong>
+                <strong class="left-padding">{{friend.username}}</strong>
             </div>
         </div>
     </div>
