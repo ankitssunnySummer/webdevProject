@@ -12,140 +12,33 @@ module.exports = function(app, models) {
     });
 
     var upload = multer({ storage: storage });
-
     var UserModel = models.UserModel;
     var FriendModel = models.FriendModel;
-
     var bcrypt = require("bcrypt-nodejs");
     var http = require('http');
     var passport = require('passport');
     var LocalStrategy = require('passport-local').Strategy;
-    passport.use('user', new LocalStrategy(localStrategy));
+
 
     app.get("/api/user", findUser);
     app.get("/api/user/:uid", findUserById);
-    app.put("/api/user/:uid", updateUser);
-    app.delete("/api/user/:uid", deleteUser);
+    app.get('/api/allusers', findAllUsersinDB);
+    app.get("/api/ebayRequest/:searchTerm", searchEBay);
+    app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
+    app.get ('/api/loggedin', loggedin);
 
     app.post  ('/api/login', passport.authenticate('user'), login);
     app.post('/api/logout', logout);
     app.post ('/api/register', register);
-    app.get ('/api/loggedin', loggedin);
     app.post ("/api/imageUpload", upload.single('uploadedFile'), uploadImage);
-    app.get("/api/ebayRequest/:searchTerm", searchEBay);
-    app.get('/api/allusers', findAllUsersinDB);
+
     app.put('/api/addFriends/:uId1/:uId2', addFriends);
-    app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
+    app.put('/api/removeFriend/:uId1/:uId2', removeFriend);
+    app.put("/api/user/:uid", updateUser);
 
-    function findRelationship(req, resp) {
-        var uId1 = req.params.uId1;
-        var uId2 = req.params.uId2;
+    app.delete("/api/user/:uid", deleteUser);
 
-        var user1, user2;
-        UserModel
-            .findUserById(uId1)
-            .then(
-                function (user) {
-                    user1 = user;
-                    UserModel
-                        .findUserById(uId2)
-                        .then(
-                            function (user) {
-                                user2 = user;
-                                FriendModel
-                                    .findRelationship(user1, user2)
-                                    .then(
-                                        function (success){
-                                            console.log(success);
-                                            resp.json(success);
-                                        },
-                                        function (err) {
-                                            console.log("Some err occurred: " + err);
-                                        });
-                            },
-                            function (error) {
-                                console.log("Find User By ID failed: " + error);
-                            }
-                        )
-
-                },
-                function (error) {
-                    console.log("Find User By ID failed: " + error);
-                }
-            );
-    }
-
-    function addFriends(req, resp) {
-        var uId1 = req.params.uId1;
-        var uId2 = req.params.uId2;
-
-        var user1, user2;
-        UserModel
-            .findUserById(uId1)
-            .then(
-                function (user) {
-                    user1 = user;
-                    UserModel
-                        .findUserById(uId2)
-                        .then(
-                            function (user) {
-                                user2 = user;
-                                FriendModel
-                                    .addFriends(user1, user2)
-                                    .then(
-                                        function (success){
-                                            resp.json(success);
-                                        },
-                                        function (err) {
-                                            console.log("Some err occurred: " + err);
-                                        });
-                            },
-                            function (error) {
-                                console.log("Find User By ID failed: " + error);
-                            }
-                        )
-
-                },
-                function (error) {
-                    console.log("Find User By ID failed: " + error);
-                }
-            );
-    }
-
-    function searchEBay(req, resp) {
-        var searchTerm  = req.params.searchTerm;
-        var url = "http://svcs.ebay.com/services/search/FindingService/v1";
-        url += "?OPERATION-NAME=findItemsByKeywords";
-        url += "&SERVICE-VERSION=1.0.0";
-        url += "&SECURITY-APPNAME=AnkitSha-EBayAPI-PRD-a45ed6035-1dcac106";
-        url += "&GLOBAL-ID=EBAY-US";
-        url += "&RESPONSE-DATA-FORMAT=JSON";
-        url += "&REST-PAYLOAD";
-        url += "&keywords=" + searchTerm;
-        url += "&paginationInput.entriesPerPage=10";
-        var body = '';
-        var parsed = '';
-        var items = '';
-        http.get(url,
-            function(response) {
-                // Continuously update stream with data
-                response.on('data', function(d) {
-                    body += d;
-                });
-                response.on('end', function() {
-                    parsed = JSON.parse(body);
-                    items = parsed.findItemsByKeywordsResponse[0].searchResult[0].item || [];
-                    console.log(items);
-                    resp.send(items);
-                });
-            },
-            function (err) {
-                console.log("Error occurred: " + err);
-                resp.sendStatus(500);
-            });
-        console.log(items);
-    }
-
+    passport.use('user', new LocalStrategy(localStrategy));
     passport.serializeUser(function(user, done) {
         if (isUser(user)) {
             done(null, user);
@@ -187,6 +80,147 @@ module.exports = function(app, models) {
         else return true;
     }
 
+
+    function findUser(req, resp) {
+        var query = req.query;
+        if (query.username && query.password) {
+            findUserByCredentials(req, resp);
+        }
+        else if(query.username) {
+            findUserByUsername(req, resp);
+        }
+    }
+
+    function findUserById(req, resp) {
+        var userId = req.params.uid;
+        UserModel
+            .findUserById(userId)
+            .then(
+                function (user) {
+                    resp.json(user);
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            )
+    }
+
+    function findAllUsersinDB(req, resp) {
+        UserModel
+            .findAllUsers()
+            .then(
+                function (users) {
+                    resp.json(users);
+                },
+                function (error) {
+                    console.log("Error while retrieving all users: " + error);
+                });
+    }
+
+    function findUserByUsername(req, resp) {
+        var username = req.query.username;
+        UserModel
+            .findUserByUsername(username)
+            .then(
+                function (user) {
+                    resp.json(user);
+                },
+                function (error) {
+                    console.log("failed in User Server: " + error);
+                }
+            );
+    }
+
+    function findUserByCredentials(req, resp) {
+        var username = req.query.username;
+        var password = req.query.password;
+        UserModel
+            .findUserByCredentials(username, password)
+            .then(
+                function (user) {
+                    resp.json(user);
+                },
+                function (error) {
+                    console.log("Find by credentials failed: " + error);
+                }
+            )
+    }
+
+    function searchEBay(req, resp) {
+        var searchTerm  = req.params.searchTerm;
+        var url = "http://svcs.ebay.com/services/search/FindingService/v1";
+        url += "?OPERATION-NAME=findItemsByKeywords";
+        url += "&SERVICE-VERSION=1.0.0";
+        url += "&SECURITY-APPNAME=AnkitSha-EBayAPI-PRD-a45ed6035-1dcac106";
+        url += "&GLOBAL-ID=EBAY-US";
+        url += "&RESPONSE-DATA-FORMAT=JSON";
+        url += "&REST-PAYLOAD";
+        url += "&keywords=" + searchTerm;
+        url += "&paginationInput.entriesPerPage=10";
+        var body = '';
+        var parsed = '';
+        var items = '';
+        http.get(url,
+            function(response) {
+                // Continuously update stream with data
+                response.on('data', function(d) {
+                    body += d;
+                });
+                response.on('end', function() {
+                    parsed = JSON.parse(body);
+                    items = parsed.findItemsByKeywordsResponse[0].searchResult[0].item || [];
+                    console.log(items);
+                    resp.send(items);
+                });
+            },
+            function (err) {
+                console.log("Error occurred: " + err);
+                resp.sendStatus(500);
+            });
+        console.log(items);
+    }
+
+    function findRelationship(req, resp) {
+        var uId1 = req.params.uId1;
+        var uId2 = req.params.uId2;
+
+        var user1, user2;
+        UserModel
+            .findUserById(uId1)
+            .then(
+                function (user) {
+                    user1 = user;
+                    UserModel
+                        .findUserById(uId2)
+                        .then(
+                            function (user) {
+                                user2 = user;
+                                FriendModel
+                                    .findRelationship(user1, user2)
+                                    .then(
+                                        function (success){
+                                            resp.json(success);
+                                        },
+                                        function (err) {
+                                            console.log("Some err occurred: " + err);
+                                        });
+                            },
+                            function (error) {
+                                console.log("Find User By ID failed: " + error);
+                            }
+                        )
+
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            );
+    }
+
+    function loggedin(req, res) {
+        res.send(req.isAuthenticated() ? req.admin : '0');
+    }
+
     function login(req, res) {
         var user = req.user;
         res.json(user);
@@ -195,10 +229,6 @@ module.exports = function(app, models) {
     function logout(req, res) {
         req.logOut();
         res.sendStatus(200);
-    }
-
-    function loggedin(req, res) {
-        res.send(req.isAuthenticated() ? req.admin : '0');
     }
 
     function register (req, res) {
@@ -242,99 +272,6 @@ module.exports = function(app, models) {
             );
     }
 
-    function findUser(req, resp) {
-        var query = req.query;
-        if (query.username && query.password) {
-            findUserByCredentials(req, resp);
-        }
-        else if(query.username) {
-            findUserByUsername(req, resp);
-        }
-    }
-
-    function findUserByUsername(req, resp) {
-        var username = req.query.username;
-        UserModel
-            .findUserByUsername(username)
-            .then(
-                function (user) {
-                    resp.json(user);
-                },
-                function (error) {
-                    console.log("failed in User Server: " + error);
-                }
-            );
-    }
-
-    function findUserByCredentials(req, resp) {
-        var username = req.query.username;
-        var password = req.query.password;
-        UserModel
-            .findUserByCredentials(username, password)
-            .then(
-                function (user) {
-                    resp.json(user);
-                },
-                function (error) {
-                    console.log("Find by credentials failed: " + error);
-                }
-            )
-    }
-
-    function findUserById(req, resp) {
-        var userId = req.params.uid;
-        UserModel
-            .findUserById(userId)
-            .then(
-                function (user) {
-                    resp.json(user);
-                },
-                function (error) {
-                    console.log("Find User By ID failed: " + error);
-                }
-            )
-    }
-
-    function findAllUsersinDB(req, resp) {
-        UserModel
-            .findAllUsers()
-            .then(
-                function (users) {
-                    resp.json(users);
-                },
-                function (error) {
-                    console.log("Error while retrieving all users: " + error);
-                });
-    }
-
-    function updateUser(req, resp) {
-        var user = req.body;
-        UserModel
-            .updateUser(user._id, user)
-            .then (
-                function (user) {
-                    resp.json(user)
-                },
-                function (error) {
-                    console.log("Update User failed: " + error);
-                }
-            )
-    }
-
-    function  deleteUser(req, resp) {
-        var userId = req.params.uid;
-        UserModel
-            .deleteUser(userId)
-            .then(
-                function (user) {
-                    resp.json(user)
-                },
-                function (error) {
-                    console.log("Delete User failed: " + error);
-                }
-            );
-    }
-
     function uploadImage(req, resp) {
         var user;
         var userId        = req.body.userId;
@@ -368,6 +305,119 @@ module.exports = function(app, models) {
                 });
     }
 
+    function addFriends(req, resp) {
+        var uId1 = req.params.uId1;
+        var uId2 = req.params.uId2;
+
+        var user1, user2;
+        UserModel
+            .findUserById(uId1)
+            .then(
+                function (user) {
+                    user1 = user;
+                    UserModel
+                        .findUserById(uId2)
+                        .then(
+                            function (user) {
+                                user2 = user;
+                                FriendModel
+                                    .addFriends(user1, user2)
+                                    .then(
+                                        function (success){
+                                            FriendModel
+                                                .addFriends(user2, user1)
+                                                .then(
+                                                    function (success){
+                                                        resp.json(success);
+                                                    },
+                                                    function(err){
+                                                        console.log("Error: " +err)})},
+                                        function (err) {
+                                            console.log("Some err occurred: " + err);
+                                        });
+                            },
+                            function (error) {
+                                console.log("Find User By ID failed: " + error);
+                            }
+                        )
+
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            );
+    }
+
+    function removeFriend(req, resp) {
+        var uId1 = req.params.uId1;
+        var uId2 = req.params.uId2;
+
+        var user1, user2;
+        UserModel
+            .findUserById(uId1)
+            .then(
+                function (user) {
+                    user1 = user;
+                    UserModel
+                        .findUserById(uId2)
+                        .then(
+                            function (user) {
+                                user2 = user;
+                                FriendModel
+                                    .removeFriend(user1, user2)
+                                    .then(
+                                        function (success){
+                                            FriendModel
+                                                .removeFriend(user2, user1)
+                                                .then(
+                                                    function (success){
+                                                        resp.json(success);
+                                                    },
+                                                    function(err){
+                                                        console.log("Error: " +err)})},
+                                        function (err) {
+                                            console.log("Some err occurred: " + err);
+                                        });
+                            },
+                            function (error) {
+                                console.log("Find User By ID failed: " + error);
+                            }
+                        )
+
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            );
+    }
+
+    function updateUser(req, resp) {
+        var user = req.body;
+        UserModel
+            .updateUser(user._id, user)
+            .then (
+                function (user) {
+                    resp.json(user)
+                },
+                function (error) {
+                    console.log("Update User failed: " + error);
+                }
+            )
+    }
+
+    function  deleteUser(req, resp) {
+        var userId = req.params.uid;
+        UserModel
+            .deleteUser(userId)
+            .then(
+                function (user) {
+                    resp.json(user)
+                },
+                function (error) {
+                    console.log("Delete User failed: " + error);
+                }
+            );
+    }
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////

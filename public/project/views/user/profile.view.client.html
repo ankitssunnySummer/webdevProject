@@ -63,14 +63,30 @@
                         </ul>
                     </div>
                 </div>
-                <a ng-href="#/user/{{website._user}}/website/{{website._id}}/page">{{website.name}}</a>
-                <a ng-href="#/user/{{website._user}}/website/{{website._id}}">
-                    <span class="glyphicon glyphicon-cog pull-right right-padding"></span>
-                </a>
                 </p>
             </div>
         </div>
     </div>
+
+
+    <div class="row">
+        <div class = "top-padding left-padding bottom-margin">
+
+            Comments!!!!!!
+            <div ng-repeat="comment in model.comments">
+                <p class="bottom-padding left-padding">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a href = {{item.viewItemURL[0]}} target="_blank">
+                            you commented on
+                        </a>
+                    </div>
+                </div>
+                </p>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class=" col-sm-3 hidden-xs">

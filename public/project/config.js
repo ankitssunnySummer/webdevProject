@@ -54,8 +54,13 @@
                 resolve         : {
                     loggedin: checkLoggedin }
             })
-            .when("/user/:uid/users/:userId", {
+            .when("/user/:uid/friend/:userId", {
                 templateUrl     : "views/user/friend.view.client.html",
+                controller      : "FriendController",
+                controllerAs    : "model"
+            })
+            .when("/user/:uid/users/:userId", {
+                templateUrl     : "views/user/user.view.client.html",
                 controller      : "UserController",
                 controllerAs    : "model"
             })

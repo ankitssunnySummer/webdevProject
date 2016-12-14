@@ -1,14 +1,16 @@
 /**
  * Created by Ankit on 10/13/2016.
  */
+
 (function() {
     angular.module("WebAppMaker")
         .controller("LoginController", LoginController)
         .controller("RegisterController", RegisterController)
         .controller("ProfileController", ProfileController)
+        .controller("FriendController", FriendController)
         .controller("UserController", UserController);
 
-    function UserController($location, $routeParams, UserService, $sce, $window) {
+    function UserController($location, $routeParams, UserService, $sce) {
         var vm            = this;
         var userId        = $routeParams["userId"];
         var uId           = $routeParams["uid"];
@@ -17,13 +19,88 @@
         vm.addFriend      = addFriend;
         vm.view;
 
+        function init() {
+            UserService
+                .findUserById(userId)
+                .success(function (user) {
+                    if (user != '0') {
+                        vm.view = user;
+                    }
+                    else {
+                        vm.alert = "Username and/or password not found. Please try again.";
+                    }
+                })
+                .error(function () {
+                    console.log("Error while inside Profile Controller.")
+                });
+
+            UserService
+                .findUserById(uId)
+                .success(function (user) {
+                    if (user != '0') {
+                        vm.user = user;
+                    }
+                    else {
+                        vm.alert = "Username and/or password not found. Please try again.";
+                    }
+                })
+                .error(function () {
+                    console.log("Error while inside Profile Controller.")
+                });
+        }
+        init();
+
 
         function addFriend() {
             UserService
                 .addFriend(vm.user._id, vm.view._id)
                 .then(
                     function (success) {
-                        $location.url('/user/' + user._id);
+                        console.log(success);
+                        $location.url('/user/' + vm.user._id + '/friend/' + vm.view._id);
+                    },
+                    function (err) {
+                        console.log("Some error occurred: " +err);
+                    }
+                )};
+
+
+        function checkSafeImage(url) {
+            return $sce.trustAsResourceUrl(url);
+        }
+
+        function logout() {
+            UserService
+                .logout()
+                .then(
+                    function(response) {
+                        vm.user = null;
+                        $location.url("/");
+                    },
+                    function (error) {
+                        console.log("Error occurred: " +error);
+                    });
+        }
+
+    }
+
+
+    function FriendController($location, $routeParams, UserService, $sce) {
+        var vm            = this;
+        var userId        = $routeParams["userId"];
+        var uId           = $routeParams["uid"];
+        vm.checkSafeImage = checkSafeImage;
+        vm.logout         = logout;
+        vm.removeFriend   = removeFriend;
+        vm.view;
+
+
+        function removeFriend() {
+            UserService
+                .removeFriend(vm.user._id, vm.view._id)
+                .then(
+                    function (success) {
+                        $location.url('/user/' + vm.user._id);
                     },
                     function (err) {
                         console.log("Some error occurred: " +err);
@@ -79,6 +156,9 @@
         }
 
     }
+
+
+
 
     function LoginController($location, UserService) {
         var vm = this;  //vm stands for View Model.
@@ -148,24 +228,21 @@
         vm.users;
 
         function userRelationship(otherId) {
-            console.log(otherId);
             UserService
                 .findRelationShip(userId, otherId)
                 .then(
                     function (success) {
-                        // route to page which shows friends
-                        console.log(success);
+                        // route to page which shows profile of users that are not friends
                         if (success.data.length == 0) {
-                            console.log("Route to User Page")
-                        }
-                        else {
                             $location.url("/user/" + userId + "/users/" + otherId);
+                        }
+                        // route to page for friends
+                        else {
+                            $location.url("/user/" + userId + "/friend/" + otherId);
                         }},
                     function (err) {
-                        //route to the page which shows users that are not friends;
-                    }
-                )
-
+                        console.log("Error occurred while finding relationship: " +err);
+                    });
         }
 
         function searchEBay(searchTerm) {
@@ -198,7 +275,6 @@
                 .error(function () {
                     console.log("Error while inside Profile Controller.")
                 });
-
 
             UserService
                 .findAllUsers()

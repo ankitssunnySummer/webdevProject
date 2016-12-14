@@ -54,26 +54,16 @@
             <span class="glyphicon glyphicon-phone-alt">
              <strong>{{model.view.phone}}</strong>
             </span>
-            <a ng-click="model.removeFriend()"
-               class="btn btn-danger btn-block top-padding ">Remove Friend</a>
+            <a ng-click="model.addFriend()"
+               class="btn btn-primary btn-block top-padding ">Add Friend</a>
         </div>
     </div>
 </div>
 
 <div class=" col-sm-3 hidden-xs">
-    Instead of active Users, print all the friends of this User.
 
     <h3><strong>{{model.view.username}}</strong>'s Friends</h3>
-    <div ng-repeat="friend in model.friends">
-        <div class="row left-padding">
-            <div class="profile-userpic-friend">
-                <a ng-href="#/user/{{model.user._id}}/users/{{allUser._id}}">
-                    <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(allUser.profilePic)}}">
-                </a>
-                <strong class="left-padding">{{allUser.username}}</strong>
-            </div>
-        </div>
-    </div>
+    <strong>You need to be friends with {{model.view.username}} to completely see their profile.</strong>
 </div>
 
 <nav class="navbar navbar-default navbar-fixed-bottom ">

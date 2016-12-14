@@ -16,6 +16,7 @@
             register              : register,
             findAllUsers          : findAllUsers,
             addFriend             : addFriend,
+            removeFriend          : removeFriend,
             searchEBay            : searchEBay,
             findRelationShip      : findRelationShip
 
@@ -29,6 +30,12 @@
         function addFriend(uId1, uId2) {
             return $http.put('/api/addFriends/' +uId1+ '/' + uId2);
         }
+
+        function removeFriend(uId1, uId2) {
+            return $http.put('/api/removeFriend/' +uId1+ '/' + uId2);
+        }
+
+
         function searchEBay(searchTerm) {
             return $http.get("/api/ebayRequest/"+ searchTerm);
         }
