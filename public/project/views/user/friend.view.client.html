@@ -1,0 +1,88 @@
+<nav class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
+    <div class="container-fluid text-blue">
+        <a class="navbar-brand no-left-padding">
+            <b class="text-white left-padding">Visiting Profile</b>
+        </a>
+    </div>
+</nav>
+
+<div class="col-sm-2 col-xs-3 top-padding">
+    <div class ="row left-padding">
+        <div class="profile-userpic">
+            <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.user.profilePic)}}">
+        </div>
+    </div>
+    <div class="row left-padding">
+        <strong>{{model.user.firstName}} {{model.user.lastName}}</strong>
+        <br>
+        <strong>{{model.user.username}}</strong>
+        <br>
+        <strong>{{model.user.email}}</strong>
+    </div>
+    <div class="row">
+        <a ng-href="#/user/account/{{model.user._id}}"
+           class="btn btn-primary ">
+            <strong>Edit</strong>
+        </a>
+        <a ng-click="model.logout()"
+           class="btn btn-danger ">Logout</a>
+    </div>
+</div>
+
+<div class="top-padding col-sm-7 col-xs-9">
+    <div class="row left-padding">
+        <div class ="row left-padding">
+            <div class="profile-userpic-visiting">
+                <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.view.profilePic)}}">
+            </div>
+        </div>
+        <div class="row left-padding top-padding">
+            <span class="glyphicon glyphicon-user">
+                <strong>{{model.view.firstName}} {{model.view.lastName}}</strong>
+                </span>
+            <br>
+            <span class="glyphicon glyphicon-barcode">
+             <strong>{{model.view.username}}</strong>
+            </span>
+            <br>
+
+            <span class="glyphicon glyphicon-envelope">
+                  <strong>{{model.view.email}}</strong>
+            </span>
+            <br>
+
+            <span class="glyphicon glyphicon-phone-alt">
+             <strong>{{model.view.phone}}</strong>
+            </span>
+            <a ng-click="model.addFriend()"
+               class="btn btn-primary btn-block top-padding ">Add Friend</a>
+        </div>
+    </div>
+</div>
+
+<div class=" col-sm-3 hidden-xs">
+    Instead of active Users, print all the friends of this User.
+
+    <h3><strong>{{model.view.username}}</strong>'s Friends</h3>
+    <div ng-repeat="friend in model.friends">
+        <div class="row left-padding">
+            <div class="profile-userpic-friend">
+                <a ng-href="#/user/{{model.user._id}}/users/{{allUser._id}}">
+                    <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(allUser.profilePic)}}">
+                </a>
+                <strong class="left-padding">{{allUser.username}}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom ">
+    <div class="container-fluid text-blue">
+        <p class="navbar-text pull-right">
+            <a ng-href="#/user/{{model.user._id}}" class="navbar-link">
+                <span class="glyphicon glyphicon-user text-white">
+                </span>
+            </a>
+        </p>
+    </div>
+</nav>

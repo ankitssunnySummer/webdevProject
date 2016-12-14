@@ -14,6 +14,7 @@ module.exports = function(app, models) {
     var upload = multer({ storage: storage });
 
     var UserModel = models.UserModel;
+    var FriendModel = models.FriendModel;
 
     var bcrypt = require("bcrypt-nodejs");
     var http = require('http');
@@ -32,8 +33,84 @@ module.exports = function(app, models) {
     app.get ('/api/loggedin', loggedin);
     app.post ("/api/imageUpload", upload.single('uploadedFile'), uploadImage);
     app.get("/api/ebayRequest/:searchTerm", searchEBay);
-    app.get('/api/allusers', findAllUsers);
+    app.get('/api/allusers', findAllUsersinDB);
+    app.put('/api/addFriends/:uId1/:uId2', addFriends);
+    app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
 
+    function findRelationship(req, resp) {
+        var uId1 = req.params.uId1;
+        var uId2 = req.params.uId2;
+
+        var user1, user2;
+        UserModel
+            .findUserById(uId1)
+            .then(
+                function (user) {
+                    user1 = user;
+                    UserModel
+                        .findUserById(uId2)
+                        .then(
+                            function (user) {
+                                user2 = user;
+                                FriendModel
+                                    .findRelationship(user1, user2)
+                                    .then(
+                                        function (success){
+                                            console.log(success);
+                                            resp.json(success);
+                                        },
+                                        function (err) {
+                                            console.log("Some err occurred: " + err);
+                                        });
+                            },
+                            function (error) {
+                                console.log("Find User By ID failed: " + error);
+                            }
+                        )
+
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            );
+    }
+
+    function addFriends(req, resp) {
+        var uId1 = req.params.uId1;
+        var uId2 = req.params.uId2;
+
+        var user1, user2;
+        UserModel
+            .findUserById(uId1)
+            .then(
+                function (user) {
+                    user1 = user;
+                    UserModel
+                        .findUserById(uId2)
+                        .then(
+                            function (user) {
+                                user2 = user;
+                                FriendModel
+                                    .addFriends(user1, user2)
+                                    .then(
+                                        function (success){
+                                            resp.json(success);
+                                        },
+                                        function (err) {
+                                            console.log("Some err occurred: " + err);
+                                        });
+                            },
+                            function (error) {
+                                console.log("Find User By ID failed: " + error);
+                            }
+                        )
+
+                },
+                function (error) {
+                    console.log("Find User By ID failed: " + error);
+                }
+            );
+    }
 
     function searchEBay(req, resp) {
         var searchTerm  = req.params.searchTerm;
@@ -43,7 +120,6 @@ module.exports = function(app, models) {
         url += "&SECURITY-APPNAME=AnkitSha-EBayAPI-PRD-a45ed6035-1dcac106";
         url += "&GLOBAL-ID=EBAY-US";
         url += "&RESPONSE-DATA-FORMAT=JSON";
-        // url += "&callback=callback";
         url += "&REST-PAYLOAD";
         url += "&keywords=" + searchTerm;
         url += "&paginationInput.entriesPerPage=10";
@@ -57,19 +133,16 @@ module.exports = function(app, models) {
                     body += d;
                 });
                 response.on('end', function() {
-                    //callback(body);
-                    //resp.send(body);
-
                     parsed = JSON.parse(body);
                     items = parsed.findItemsByKeywordsResponse[0].searchResult[0].item || [];
                     console.log(items);
                     resp.send(items);
                 });
             },
-        function (err) {
-            console.log("Error occurred: " + err);
-            resp.sendStatus(500);
-        });
+            function (err) {
+                console.log("Error occurred: " + err);
+                resp.sendStatus(500);
+            });
         console.log(items);
     }
 
@@ -222,9 +295,9 @@ module.exports = function(app, models) {
             )
     }
 
-    function findAllUsers() {
+    function findAllUsersinDB(req, resp) {
         UserModel
-            .findAllUsers
+            .findAllUsers()
             .then(
                 function (users) {
                     resp.json(users);

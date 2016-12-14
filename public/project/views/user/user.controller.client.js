@@ -5,11 +5,82 @@
     angular.module("WebAppMaker")
         .controller("LoginController", LoginController)
         .controller("RegisterController", RegisterController)
-        .controller("ProfileController", ProfileController);
+        .controller("ProfileController", ProfileController)
+        .controller("UserController", UserController);
 
-//    var request      = require('request');
+    function UserController($location, $routeParams, UserService, $sce, $window) {
+        var vm            = this;
+        var userId        = $routeParams["userId"];
+        var uId           = $routeParams["uid"];
+        vm.checkSafeImage = checkSafeImage;
+        vm.logout         = logout;
+        vm.addFriend      = addFriend;
+        vm.view;
 
-    function LoginController($location, UserService, $rootScope, $window) {
+
+        function addFriend() {
+            UserService
+                .addFriend(vm.user._id, vm.view._id)
+                .then(
+                    function (success) {
+                        $location.url('/user/' + user._id);
+                    },
+                    function (err) {
+                        console.log("Some error occurred: " +err);
+                    }
+                )};
+
+        function init() {
+            UserService
+                .findUserById(userId)
+                .success(function (user) {
+                    if (user != '0') {
+                        vm.view = user;
+                    }
+                    else {
+                        vm.alert = "Username and/or password not found. Please try again.";
+                    }
+                })
+                .error(function () {
+                    console.log("Error while inside Profile Controller.")
+                });
+
+            UserService
+                .findUserById(uId)
+                .success(function (user) {
+                    if (user != '0') {
+                        vm.user = user;
+                    }
+                    else {
+                        vm.alert = "Username and/or password not found. Please try again.";
+                    }
+                })
+                .error(function () {
+                    console.log("Error while inside Profile Controller.")
+                });
+        }
+        init();
+
+        function checkSafeImage(url) {
+            return $sce.trustAsResourceUrl(url);
+        }
+
+        function logout() {
+            UserService
+                .logout()
+                .then(
+                    function(response) {
+                        vm.user = null;
+                        $location.url("/");
+                    },
+                    function (error) {
+                        console.log("Error occurred: " +error);
+                    });
+        }
+
+    }
+
+    function LoginController($location, UserService) {
         var vm = this;  //vm stands for View Model.
         vm.login = login;
 
@@ -72,7 +143,30 @@
         vm.logout           = logout;
         vm.checkSafeImage   = checkSafeImage;
         vm.searchEBay       = searchEBay;
+        vm.userRelationship = userRelationship;
         vm.items;
+        vm.users;
+
+        function userRelationship(otherId) {
+            console.log(otherId);
+            UserService
+                .findRelationShip(userId, otherId)
+                .then(
+                    function (success) {
+                        // route to page which shows friends
+                        console.log(success);
+                        if (success.data.length == 0) {
+                            console.log("Route to User Page")
+                        }
+                        else {
+                            $location.url("/user/" + userId + "/users/" + otherId);
+                        }},
+                    function (err) {
+                        //route to the page which shows users that are not friends;
+                    }
+                )
+
+        }
 
         function searchEBay(searchTerm) {
             UserService
@@ -80,31 +174,6 @@
                 .then(
                     function (body) {
                         vm.items = body.data;
-
-                        var items = body.data;
-                        var subtitle;
-                        for (var i = 0; i < items.length; ++i) {
-                            var item = items[i];
-                            var title = item.title;
-                            if (item.subtitle == undefined) {
-                                subtitle[0] = title[0];
-                            }
-                            else {
-                                subtitle = item.subtitle;
-                            }
-                            var cat = item.primaryCategory;
-
-
-                            var pic = item.galleryURL;
-                            var viewitem = item.viewItemURL;
-                            var location = item.location;
-                            console.log(title[0]);
-                            console.log(subtitle[0]);
-                            console.log(cat[0]);
-                            console.log(pic[0]);
-                            console.log(viewitem[0]);
-                            console.log(location[0]);
-                        }
                     },
                     function (err) {
                         console.log("Error while EBay call: " +err);
@@ -135,7 +204,15 @@
                 .findAllUsers()
                 .then(
                     function (users) {
-                        vm.users = users;
+                        var temp = users.data;
+                        var finalUsers= [];
+                        //console.log(finalUsers);
+                        for(var i= 0; i < temp.length; i++) {
+                            if (temp[i]._id != vm.user._id) {
+                                finalUsers[i] = temp[i];
+                            }
+                        }
+                        vm.users = finalUsers;
                     },
                     function (err) {
                         console.log("Error while finding all users: +" +err);

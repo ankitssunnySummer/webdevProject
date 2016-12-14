@@ -13,7 +13,6 @@ module.exports = function() {
         profilePic: String,
         gender: {type: String, default: 'Neutral'},
         websites: [{type: mongoose.Schema.ObjectId, ref: 'WebsiteModel'}],
-        friends: [{type: mongoose.Schema.ObjectId, ref: 'UserModel'}],
         dateCreated: Date,
         facebook: {
             id:    String,

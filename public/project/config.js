@@ -24,22 +24,21 @@
                 controllerAs    : "model"
             })
             .when("/admin", {
-                templateUrl     : "views/user/admin.view.client.html",
+                templateUrl     : "views/admin/admin.view.client.html",
                 controller      : "AdminLoginController",
                 controllerAs    : "model"
             })
             .when("/adminRegister", {
-                templateUrl     : "views/user/adminRegister.view.client.html",
+                templateUrl     : "views/admin/adminRegister.view.client.html",
                 controller      : "AdminRegisterController",
                 controllerAs    : "model"
             })
             .when("/admin/:aId", {
-                templateUrl     : "views/user/adminControl.view.client.html",
+                templateUrl     : "views/admin/adminControl.view.client.html",
                 controller      : "AdminProfileController",
                 controllerAs    : "model",
                 resolve         : {
                     adminLoggedin    : checkAdminLoggedIn}
-
             })
             .when("/user/:uid", {
                 templateUrl     : "views/user/profile.view.client.html",
@@ -54,6 +53,11 @@
                 controllerAs    : "model",
                 resolve         : {
                     loggedin: checkLoggedin }
+            })
+            .when("/user/:uid/users/:userId", {
+                templateUrl     : "views/user/friend.view.client.html",
+                controller      : "UserController",
+                controllerAs    : "model"
             })
 
             .when("/user/:uid/website", {

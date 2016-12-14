@@ -17,16 +17,19 @@ module.exports = function() {
 
     var PageModel = require("./page/page.model.server")();
     var UserModel = require("./user/user.model.server")();
-    var AdminModel = require("./user/admin.model.server")();
+    var AdminModel = require("./admin/admin.model.server.js")();
     var WebsiteModel = require("./website/website.model.server")();
     var WidgetModel = require("./widget/widget.model.server")();
+    var FriendModel = require("./friends/friends.model.server")();
+
 
     var models = {
         UserModel       : UserModel,
         PageModel       : PageModel,
         WebsiteModel    : WebsiteModel,
         WidgetModel     : WidgetModel,
-        AdminModel      : AdminModel
+        AdminModel      : AdminModel,
+        FriendModel    : FriendModel
     }
     return models;
 };

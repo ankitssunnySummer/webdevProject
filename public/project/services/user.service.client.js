@@ -15,11 +15,20 @@
             logout                : logout,
             register              : register,
             findAllUsers          : findAllUsers,
-            searchEBay            : searchEBay
+            addFriend             : addFriend,
+            searchEBay            : searchEBay,
+            findRelationShip      : findRelationShip
 
         }
         return api;
 
+        function findRelationShip(uId1, uId2) {
+            return $http.get('/api/findRelationship/' +uId1+ '/' + uId2);
+        }
+
+        function addFriend(uId1, uId2) {
+            return $http.put('/api/addFriends/' +uId1+ '/' + uId2);
+        }
         function searchEBay(searchTerm) {
             return $http.get("/api/ebayRequest/"+ searchTerm);
         }

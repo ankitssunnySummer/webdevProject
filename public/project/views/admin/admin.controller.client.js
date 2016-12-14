@@ -108,7 +108,7 @@
                 .then(
                     function(response) {
                         vm.user = null;
-                        $location.url("/");
+                        $location.url("/admin");
                     },
                     function (error) {
                         console.log("Error occurred: " +error);
