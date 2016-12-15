@@ -289,7 +289,7 @@
         }
     }
 
-    function ProfileController($routeParams, $location, UserService, $sce) {
+    function ProfileController($routeParams, $location, UserService, $sce, $route) {
         var vm = this;
         //  var request = require('request');
         delete vm.alert;
@@ -300,42 +300,12 @@
         vm.checkSafeImage   = checkSafeImage;
         vm.searchEBay       = searchEBay;
         vm.userRelationship = userRelationship;
+        vm.deleteComment    = deleteComment;
+        vm.addReview        = addReview;
+        vm.deleteReview     = deleteReview;
         vm.items;
         vm.users;
-
-        function userRelationship(otherId) {
-            UserService
-                .findRelationShip(userId, otherId)
-                .then(
-                    function (success) {
-                        // route to page which shows profile of users that are not friends
-                        if (success.data.length == 0) {
-                            $location.url("/user/" + userId + "/users/" + otherId);
-                        }
-                        // route to page for friends
-                        else {
-                            $location.url("/user/" + userId + "/friend/" + otherId);
-                        }},
-                    function (err) {
-                        console.log("Error occurred while finding relationship: " +err);
-                    });
-        }
-
-        function searchEBay(searchTerm) {
-            UserService
-                .searchEBay(searchTerm)
-                .then(
-                    function (body) {
-                        vm.items = body.data;
-                    },
-                    function (err) {
-                        console.log("Error while EBay call: " +err);
-                    });
-        }
-
-        function checkSafeImage(url) {
-            return $sce.trustAsResourceUrl(url);
-        }
+        vm.user;
 
         function init() {
             UserService
@@ -414,9 +384,83 @@
                         console.log("error: " +err);
                     });
 
-
+            UserService
+                .findAllReviews()
+                .then(
+                    function (reviews) {
+                        vm.reviews = reviews.data;
+                    },
+                function (err) {
+                    console.log("error: " +err);
+                });
         }
         init();
+
+        function addReview(item, review) {
+            var review = {
+                reviewer: vm.user_id,
+                review: review,
+                itemName: item.title[0],
+                galleryUrl: item.galleryURL[0]};
+
+            UserService
+                .addReview(review)
+                .then(
+                    function (success) {
+                        $route.reload();
+                    },
+                    function (err) {
+                        console.log("Error: " +err);
+                    });
+
+        }
+
+        function deleteReview(reviewId) {
+            UserService
+                .removeReview(reviewId)
+                .then(
+                    function (success) {
+                        $route.reload();
+                    },
+                    function (err) {
+                        console.log("Error: " +err);
+                    });
+        }
+
+        function userRelationship(otherId) {
+            UserService
+                .findRelationShip(userId, otherId)
+                .then(
+                    function (success) {
+                        // route to page which shows profile of users that are not friends
+                        if (success.data.length == 0) {
+                            $location.url("/user/" + userId + "/users/" + otherId);
+                        }
+                        // route to page for friends
+                        else {
+                            $location.url("/user/" + userId + "/friend/" + otherId);
+                        }},
+                    function (err) {
+                        console.log("Error occurred while finding relationship: " +err);
+                    });
+        }
+
+        function searchEBay(searchTerm) {
+            UserService
+                .searchEBay(searchTerm)
+                .then(
+                    function (body) {
+                        vm.items = body.data;
+                    },
+                    function (err) {
+                        console.log("Error while EBay call: " +err);
+                    });
+        }
+
+        function checkSafeImage(url) {
+            return $sce.trustAsResourceUrl(url);
+        }
+
 
         function logout() {
             UserService
@@ -457,6 +501,17 @@
                 .error(function (error) {
                     console.log("Error while deleting:" + error);
                 });
+        }
+        function deleteComment(commentId) {
+            UserService
+                .deleteComment(commentId)
+                .then(
+                    function (success) {
+                        $route.reload();
+                    },
+                    function (err) {
+                        console.log("Error: " +err);
+                    });
         }
     }
 })();

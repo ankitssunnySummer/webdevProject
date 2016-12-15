@@ -22,6 +22,7 @@ module.exports = function() {
     var WidgetModel = require("./widget/widget.model.server")();
     var FriendModel = require("./friends/friends.model.server")();
     var CommentModel = require("./comments/comment.model.server")();
+    var ReviewModel = require("./review/review.model.server")();
 
     var models = {
         UserModel       : UserModel,
@@ -30,7 +31,8 @@ module.exports = function() {
         WidgetModel     : WidgetModel,
         AdminModel      : AdminModel,
         FriendModel     : FriendModel,
-        CommentModel    : CommentModel
+        CommentModel    : CommentModel,
+        ReviewModel     : ReviewModel
     }
     return models;
 };

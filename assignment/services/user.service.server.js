@@ -15,11 +15,12 @@ module.exports = function(app, models) {
     var UserModel = models.UserModel;
     var FriendModel = models.FriendModel;
     var CommentModel = models.CommentModel;
+    var ReviewModel   = models.ReviewModel;
     var bcrypt = require("bcrypt-nodejs");
     var http = require('http');
     var passport = require('passport');
     var LocalStrategy = require('passport-local').Strategy;
-    
+
     app.get("/api/user", findUser);
     app.get("/api/user/:uid", findUserById);
     app.get('/api/allusers', findAllUsersinDB);
@@ -27,7 +28,7 @@ module.exports = function(app, models) {
     app.get('/api/findFriendsbyId/:ids', findFriendsById);
     app.get('/api/allCommentsOnUser/:uid', allCommentsOnUser)
     app.get('/api/allCommentsByUser/:uid', findAllCommentsByUser);
-
+    app.get("/api/allReviews/", findAllReviews);
     app.get("/api/ebayRequest/:searchTerm", searchEBay);
     app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
     app.get ('/api/loggedin', loggedin);
@@ -36,7 +37,7 @@ module.exports = function(app, models) {
     app.post('/api/logout', logout);
     app.post ('/api/register', register);
     app.post('/api/createComment/', createComment);
-
+    app.post('/api/addReview/', addReview);
     app.post ("/api/imageUpload", upload.single('uploadedFile'), uploadImage);
 
     app.put('/api/addFriends/:uId1/:uId2', addFriends);
@@ -44,6 +45,62 @@ module.exports = function(app, models) {
     app.put("/api/user/:uid", updateUser);
 
     app.delete("/api/user/:uid", deleteUser);
+    app.delete("/api/deleteComment/:cid", deleteComment);
+    app.delete("/api/removeReview/:reviewId", removeReview);
+
+
+
+    function deleteComment(req, resp) {
+        var commentId = req.params.cid;
+        CommentModel
+            .deleteComment(commentId)
+            .then(
+                function (succ) {
+                    resp.json(succ);
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+    }
+
+    function addReview(req, resp) {
+        var review = req.body;
+        ReviewModel
+            .createReview(review)
+            .then(
+                function (success) {
+                    resp.json(success);
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+    }
+
+    function removeReview(req, resp) {
+        var reviewId = req.params.reviewId;
+        ReviewModel
+            .deleteReview(reviewId)
+            .then(
+                function (success) {
+                    resp.json(success);
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+    }
+
+
+    function findAllReviews(req, resp) {
+        ReviewModel
+            .findAllReviews()
+            .then(
+                function (success) {
+                    resp.json(success);
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+    }
 
     passport.use('user', new LocalStrategy(localStrategy));
     passport.serializeUser(function(user, done) {
@@ -190,7 +247,6 @@ module.exports = function(app, models) {
 
     function allCommentsOnUser(req, resp) {
         var userId = req.params.uid;
-        console.log(userId);
         UserModel
             .findUserById(userId)
             .then(

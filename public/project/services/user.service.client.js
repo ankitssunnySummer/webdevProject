@@ -17,13 +17,17 @@
             createComment         : createComment,
             findAllCommentsOnUser : findAllCommentsOnUser,
             findAllCommentsByUser : findAllCommentsByUser,
+            deleteComment         : deleteComment,
             findAllUsers          : findAllUsers,
             findAllFriends        : findAllFriends,
             findFriendsByID       : findFriendsByID,
             addFriend             : addFriend,
             removeFriend          : removeFriend,
             searchEBay            : searchEBay,
-            findRelationShip      : findRelationShip
+            findRelationShip      : findRelationShip,
+            addReview             : addReview,
+            findAllReviews        : findAllReviews,
+            removeReview          : removeReview
 
         }
         return api;
@@ -99,5 +103,19 @@
             return $http.get('/api/allCommentsByUser/' + userId);
         }
 
+        function deleteComment(commentId) {
+            return $http.delete('/api/deleteComment/' + commentId);
+        }
+        function addReview(review) {
+            return $http.post("/api/addReview/", review );
+        }
+        function findAllReviews() {
+            return $http.get("/api/allReviews/");
+        }
+
+        function removeReview(reviewId) {
+            return $http.delete("/api/removeReview/" + reviewId);
+
+        }
     }
 })();

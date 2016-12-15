@@ -77,6 +77,17 @@
                             <li class="list-group-item">{{item.title[0]}}</li>
                             <li class="list-group-item">{{item.subtitle[0]}}</li>
                             <li class="list-group-item">{{item.location[0]}}</li>
+                            <form>
+                                <div class="form-group">
+                                    <textarea ng-model="model.review"
+                                              class="form-control"
+                                              rows="3"
+                                              id="Review"
+                                              placeholder="Leave a review"></textarea>
+                                    <a ng-click="model.addReview(item, model.review)"
+                                       class="btn btn-primary  btn-block">Save</a>
+                                </div>
+                            </form>
                         </ul>
                     </div>
                 </div>
@@ -84,24 +95,48 @@
             </div>
         </div>
     </div>
-
     <div class="row bottom-padding left-padding top-padding">
         <h4>Comments made by you</h4>
         <div ng-repeat="comment in model.comments ">
             <div class="row left-padding bottom-padding">
                 {{comment.comment}}
+                <a href="" class="navbar-link"
+                   ng-click="model.deleteComment(comment._id)">
+                    <span class="glyphicon glyphicon-remove text-red"></span>
+                </a>
             </div>
         </div>
         <h4>Your friends posted on your wall</h4>
         <div ng-repeat="com in model.commentsReceived ">
             <div class="row left-padding bottom-padding">
                 {{com.comment}}
+                <a href="" class="navbar-link"
+                   ng-click="model.deleteComment(com._id)">
+                    <span class="glyphicon glyphicon-remove text-red"></span>
+                </a>
             </div>
         </div>
+        <h4>Your Reviews</h4>
+        <div ng-repeat="review in model.reviews">
+            <div class="row  bottom-padding">
+                <div class="col-sm-5">
+                    <img class="img-responsive pull-left " ng-src="{{model.checkSafeImage(review.galleryUrl)}}">
+                </div>
+                <div class="col-sm-7">
+                    <ul class="list-group">
+                        <li class="list-group-item">Name: {{review.itemName}}</li>
+                        <li class="list-group-item">Review: {{review.review}}
+                            <a href="" class="navbar-link"
+                               ng-click="model.deleteReview(review._id)">
+                                <span class="glyphicon glyphicon-remove text-red"></span>
+                            </a>
+                        </li>
+                    </ul>
 
+                </div>
 
-
-
+            </div>
+        </div>
     </div>
 </div>
 
