@@ -385,7 +385,7 @@
                     });
 
             UserService
-                .findAllReviews()
+                .findReviewsForUser(userId)
                 .then(
                     function (reviews) {
                         vm.reviews = reviews.data;
@@ -397,22 +397,30 @@
         init();
 
         function addReview(item, review) {
-            var review = {
-                reviewer: vm.user_id,
-                review: review,
-                itemName: item.title[0],
-                galleryUrl: item.galleryURL[0]};
-
-            UserService
-                .addReview(review)
-                .then(
-                    function (success) {
-                        $route.reload();
-                    },
-                    function (err) {
-                        console.log("Error: " +err);
-                    });
-
+           UserService
+               .findUserById(vm.user._id)
+               .then(
+                   function (user) {
+                       console.log(user.data);
+                       var review = {
+                           reviewer: user.data,
+                           review: review,
+                           itemName: item.title[0],
+                           galleryUrl: item.galleryURL[0]};
+                       console.log(review);
+                       UserService
+                           .addReview(review)
+                           .then(
+                               function (success) {
+                                   $route.reload();
+                               },
+                               function (err) {
+                                   console.log("Error: " +err);
+                               });
+                   },
+               function (err) {
+                   console.log("Error: " + err);
+               })
         }
 
         function deleteReview(reviewId) {

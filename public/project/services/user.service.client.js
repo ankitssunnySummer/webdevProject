@@ -26,7 +26,7 @@
             searchEBay            : searchEBay,
             findRelationShip      : findRelationShip,
             addReview             : addReview,
-            findAllReviews        : findAllReviews,
+            findReviewsForUser    : findReviewsForUser,
             removeReview          : removeReview
 
         }
@@ -109,8 +109,8 @@
         function addReview(review) {
             return $http.post("/api/addReview/", review );
         }
-        function findAllReviews() {
-            return $http.get("/api/allReviews/");
+        function findReviewsForUser(userId) {
+            return $http.get("/api/allReviewsForUser/" + userId);
         }
 
         function removeReview(reviewId) {

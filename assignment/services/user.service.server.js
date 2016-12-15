@@ -28,7 +28,7 @@ module.exports = function(app, models) {
     app.get('/api/findFriendsbyId/:ids', findFriendsById);
     app.get('/api/allCommentsOnUser/:uid', allCommentsOnUser)
     app.get('/api/allCommentsByUser/:uid', findAllCommentsByUser);
-    app.get("/api/allReviews/", findAllReviews);
+    app.get("/api/allReviewsForUser/:uid", findAllReviewsForUser);
     app.get("/api/ebayRequest/:searchTerm", searchEBay);
     app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
     app.get ('/api/loggedin', loggedin);
@@ -90,12 +90,22 @@ module.exports = function(app, models) {
     }
 
 
-    function findAllReviews(req, resp) {
-        ReviewModel
-            .findAllReviews()
+    function findAllReviewsForUser(req, resp) {
+        var userId = req.params.uid;
+        UserModel
+            .findUserById(userId)
             .then(
-                function (success) {
-                    resp.json(success);
+                function (user) {
+                    ReviewModel
+                        .findAllReviewsByUser(user)
+                        .then(
+                            function (success) {
+                                console.log(success);
+                                resp.json(success);
+                            },
+                            function (err) {
+                                console.log("Error: " +err);
+                            });
                 },
                 function (err) {
                     console.log("Error: " +err);

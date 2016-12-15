@@ -19,8 +19,9 @@ module.exports = function() {
         return ReviewModel.create(review);
     }
 
-    function findAllReviewsByUser(userId) {
-        return ReviewModel.find({reviewer: userId});
+    function findAllReviewsByUser(user) {
+
+        return ReviewModel.find({reviewer: user._id});
     }
 
     function findAllReviews() {
