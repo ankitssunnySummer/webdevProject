@@ -14,16 +14,20 @@ module.exports = function(app, models) {
     var upload = multer({ storage: storage });
     var UserModel = models.UserModel;
     var FriendModel = models.FriendModel;
+    var CommentModel = models.CommentModel;
     var bcrypt = require("bcrypt-nodejs");
     var http = require('http');
     var passport = require('passport');
     var LocalStrategy = require('passport-local').Strategy;
-
-
+    
     app.get("/api/user", findUser);
     app.get("/api/user/:uid", findUserById);
     app.get('/api/allusers', findAllUsersinDB);
     app.get('/api/allFriends/:uid', findAllFriends);
+    app.get('/api/findFriendsbyId/:ids', findFriendsById);
+    app.get('/api/allCommentsOnUser/:uid', allCommentsOnUser)
+    app.get('/api/allCommentsByUser/:uid', findAllCommentsByUser);
+
     app.get("/api/ebayRequest/:searchTerm", searchEBay);
     app.get('/api/findRelationship/:uId1/:uId2', findRelationship);
     app.get ('/api/loggedin', loggedin);
@@ -31,6 +35,8 @@ module.exports = function(app, models) {
     app.post  ('/api/login', passport.authenticate('user'), login);
     app.post('/api/logout', logout);
     app.post ('/api/register', register);
+    app.post('/api/createComment/', createComment);
+
     app.post ("/api/imageUpload", upload.single('uploadedFile'), uploadImage);
 
     app.put('/api/addFriends/:uId1/:uId2', addFriends);
@@ -167,6 +173,64 @@ module.exports = function(app, models) {
                     console.log("Error: " + err);
                 });
     }
+
+    function findFriendsById(req, resp) {
+        var ids = req.params.ids;
+        UserModel
+            .findUsersById(ids)
+            .then(
+                function (users) {
+                    resp.json(users)
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+
+    }
+
+    function allCommentsOnUser(req, resp) {
+        var userId = req.params.uid;
+        console.log(userId);
+        UserModel
+            .findUserById(userId)
+            .then(
+                function (user) {
+                    CommentModel
+                        .findAllCommentsOnUser(user)
+                        .then(
+                            function (comments) {
+                                resp.send(comments);
+                            },
+                            function (err) {
+                                console.log("Error: " +err);
+                            });
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                })
+    }
+
+    function findAllCommentsByUser(req, resp) {
+        var userId = req.params.uid;
+        UserModel
+            .findUserById(userId)
+            .then(
+                function (user) {
+                    CommentModel
+                        .findAllCommentsByUser(user)
+                        .then(
+                            function (comments) {
+                                resp.send(comments);
+                            },
+                            function (err) {
+                                console.log("Error: " +err);
+                            });
+                },
+                function (err) {
+                    console.log("Error: " +err);
+                });
+    }
+
     function searchEBay(req, resp) {
         var searchTerm  = req.params.searchTerm;
         var url = "http://svcs.ebay.com/services/search/FindingService/v1";
@@ -177,7 +241,7 @@ module.exports = function(app, models) {
         url += "&RESPONSE-DATA-FORMAT=JSON";
         url += "&REST-PAYLOAD";
         url += "&keywords=" + searchTerm;
-        url += "&paginationInput.entriesPerPage=10";
+        url += "&paginationInput.entriesPerPage=6";
         var body = '';
         var parsed = '';
         var items = '';
@@ -190,7 +254,6 @@ module.exports = function(app, models) {
                 response.on('end', function() {
                     parsed = JSON.parse(body);
                     items = parsed.findItemsByKeywordsResponse[0].searchResult[0].item || [];
-                    console.log(items);
                     resp.send(items);
                 });
             },
@@ -198,7 +261,6 @@ module.exports = function(app, models) {
                 console.log("Error occurred: " + err);
                 resp.sendStatus(500);
             });
-        console.log(items);
     }
 
     function findRelationship(req, resp) {
@@ -272,6 +334,20 @@ module.exports = function(app, models) {
             );
     }
 
+    function createComment(req, resp) {
+    //return $http.post('/api/createComment/', comment);
+        var comment = req.body;
+        CommentModel
+            .createComment(comment)
+            .then(
+                function (success) {
+                    resp.json(success);
+                },
+                function (err) {
+                    console.log("error: " + err);
+                });
+
+    }
     function localStrategy(username, password, done) {
         UserModel
             .findUserByUsername(username)
@@ -282,7 +358,6 @@ module.exports = function(app, models) {
                         return done(null, user);
                     }
                     else {
-                        console.log(user);
                         console.log("There appears to be some error.");
                         return done(null, false);
                     }
@@ -453,7 +528,6 @@ module.exports = function(app, models) {
     app.get ('/api/admin/loggedin', adminLoggedin);
 
     function adminLogin(req, res) {
-        console.log("Inside login server");
         var user = req.user;
         res.json(user);
     }
@@ -465,7 +539,6 @@ module.exports = function(app, models) {
     }
 
     function adminLoggedin(req, res) {
-        console.log("Inside adming loogedd in.");
         res.send(req.isAuthenticated() ? req.user : '0');
     }
 
@@ -490,8 +563,6 @@ module.exports = function(app, models) {
     }
 
     function adminStrategy(username, password, done) {
-        console.log("Username: " +username + "  Password: " +password);
-        console.log("Inside Admin Service server")
         AdminModel
             .findAdmin(username)
             .then(
@@ -526,8 +597,6 @@ module.exports = function(app, models) {
     }
 
     function findAdminById(req, resp) {
-        console.log("Inside  find admin by ID.");
-
         var userId = req.params.aId;
         AdminModel
             .findAdminById(userId)
@@ -537,11 +606,6 @@ module.exports = function(app, models) {
                 },
                 function (error) {
                     console.log("Find Admin By ID failed: " + error);
-                }
-            )
+                });
     }
-
-
-
-
 };

@@ -65,8 +65,8 @@ a {
     border-right:1px solid gray;
     height:100% !important;
     min-height: 100%;
-    margin-bottom: -99999px;
-    padding-bottom: 99999px;
+    margin-bottom: -999px;
+    padding-bottom: 999px;
 }
 
 .relative-position {
@@ -136,8 +136,8 @@ a {
 .profile-userpic-visiting img {
     float: none;
     margin: 0 auto;
-    width: 50%;
-    height: 50%;
+    width: 40%;
+    height: 40%;
     -webkit-border-radius: 5% !important;
     -moz-border-radius: 5% !important;
     border-radius: 5% !important;

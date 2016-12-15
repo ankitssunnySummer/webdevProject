@@ -1,12 +1,16 @@
 <nav class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
     <div class="container-fluid text-blue">
-        <a class="navbar-brand no-left-padding">
-            <b class="text-white left-padding">Visiting Profile</b>
-        </a>
+        <p class="navbar-text full-width">
+            <a ng-href="#/user/{{model.user._id}}"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">Friends</b>
+        </p>
     </div>
 </nav>
 
-<div class="col-sm-2 col-xs-3 top-padding">
+<div class="col-sm-2 col-xs-3 top-padding vertical-line">
     <div class ="row left-padding">
         <div class="profile-userpic">
             <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.user.profilePic)}}">
@@ -29,14 +33,18 @@
     </div>
 </div>
 
-<div class="top-padding col-sm-7 col-xs-9 bottom-margin">
+<div class="top-padding col-sm-7 col-xs-9 bottom-margin vertical-line">
     <div class="row left-padding">
-        <div class ="row left-padding">
+        <div class ="row ">
             <div class="profile-userpic-visiting">
                 <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.view.profilePic)}}">
             </div>
         </div>
-        <div class="row left-padding top-padding">
+        <div class="row bottom-padding">
+            <a ng-click="model.removeFriend()"
+               class="btn btn-danger  top-padding ">Remove Friend</a>
+        </div>
+        <div class="row top-padding">
             <span class="glyphicon glyphicon-user">
                 <strong>{{model.view.firstName}} {{model.view.lastName}}</strong>
                 </span>
@@ -54,23 +62,50 @@
             <span class="glyphicon glyphicon-phone-alt">
              <strong>{{model.view.phone}}</strong>
             </span>
-            <a ng-click="model.removeFriend()"
-               class="btn btn-danger btn-block top-padding ">Remove Friend</a>
+
+        </div>
+    </div>
+
+
+    <div class="row bottom-padding left-padding top-padding">
+        <p>Comments Section</p>
+        <form action="form-control">
+            <div class="input-group">
+                <input  ng-model="model.commentString" placeholder="Add a comment."
+                        type="text" class="form-control">
+                <span class="input-group-btn">
+                    <a ng-click="model.addComment(model.commentString)"
+                       class="btn btn-default btn-block" type="button">Add Comment</a>
+                </span>
+                </input>
+            </div>
+        </form>
+    </div>
+
+    <div class="row bottom-padding">
+        <div ng-repeat="comment in model.comments ">
+            <div class="row left-padding bottom-padding">
+                {{comment.comment}}
+            </div>
         </div>
     </div>
 </div>
 
 <div class=" col-sm-3 hidden-xs">
-
     <h3><strong>{{model.view.username}}</strong>'s Friends</h3>
-    <div ng-repeat="id in model.ids ">
-        <div class="row left-padding">
+    <div ng-repeat="friend in model.friends ">
+        <div class="row left-padding bottom-padding">
             <div class="profile-userpic-friend">
                 <a href=""
-                   ng-click="model.userRelationship(id)">
+                   ng-click="model.userRelationship(friend._id)">
                     <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(friend.profilePic)}}">
                 </a>
-                <strong class="left-padding">{{friend.username}}</strong>
+
+                <a href=""
+                   ng-click="model.userRelationship(friend._id)">
+                    <strong class="left-padding">{{friend.username}}</strong>
+                </a>
+
             </div>
         </div>
     </div>

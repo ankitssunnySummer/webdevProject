@@ -15,7 +15,8 @@ module.exports = function() {
         updateUser               : updateUser,
         deleteUser               : deleteUser,
         findUserByFacebookId     : findUserByFacebookId,
-        findAllUsers             : findAllUsers
+        findAllUsers             : findAllUsers,
+        findUsersById            : findUsersById
     };
     return api;
 
@@ -58,5 +59,11 @@ module.exports = function() {
 
     function findAllUsers() {
         return UserModel.find({});
+    }
+
+    function findUsersById(ids) {
+        var iDs = ids.split(',');
+        return UserModel.find({
+            '_id': { $in: iDs}});
     }
 };

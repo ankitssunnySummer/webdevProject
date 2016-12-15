@@ -6,7 +6,7 @@
     </div>
 </nav>
 
-<div class="col-sm-2 col-xs-3 top-padding">
+<div class="col-sm-2 col-xs-3 top-padding vertical-line">
     <div class ="row left-padding">
         <div class="profile-userpic">
             <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(model.user.profilePic)}}">
@@ -28,9 +28,26 @@
         <a ng-click="model.logout()"
            class="btn btn-danger ">Logout</a>
     </div>
+    <div class="row">
+        <h4><strong>{{model.user.username}}</strong>'s Friends</h4>
+        <div ng-repeat="friend in model.friends ">
+            <div class="row left-padding bottom-padding">
+                <div class="profile-userpic-friend">
+                    <a href=""
+                       ng-click="model.userRelationship(friend._id)">
+                        <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(friend.profilePic)}}">
+                    </a>
+                    <a href=""
+                       ng-click="model.userRelationship(friend._id)">
+                        <strong class="left-padding">{{friend.username}}</strong>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="top-padding col-sm-7 col-xs-9">
+<div class="top-padding col-sm-7 col-xs-9 vertical-line">
     <div class="row left-padding">
         <form action="form-control">
             <div class="input-group">
@@ -68,31 +85,30 @@
         </div>
     </div>
 
-
-    <div class="row">
-        <div class = "top-padding left-padding bottom-margin">
-
-            Comments!!!!!!
-            <div ng-repeat="comment in model.comments">
-                <p class="bottom-padding left-padding">
-                <div class="row">
-                    <div class="col-xs-12">
-                        <a href = {{item.viewItemURL[0]}} target="_blank">
-                            you commented on
-                        </a>
-                    </div>
-                </div>
-                </p>
+    <div class="row bottom-padding left-padding top-padding">
+        <h4>Comments made by you</h4>
+        <div ng-repeat="comment in model.comments ">
+            <div class="row left-padding bottom-padding">
+                {{comment.comment}}
             </div>
         </div>
-    </div>
+        <h4>Your friends posted on your wall</h4>
+        <div ng-repeat="com in model.commentsReceived ">
+            <div class="row left-padding bottom-padding">
+                {{com.comment}}
+            </div>
+        </div>
 
+
+
+
+    </div>
 </div>
 
-<div class=" col-sm-3 hidden-xs">
-    <h3> Active Users </h3>
+<div class="col-sm-3 hidden-xs top-padding">
+    <h4> Active Users </h4>
     <div ng-repeat="allUser in model.users">
-        <div class="row left-padding bottom-padding">
+        <div class="row left-padding bottom-padding ">
             <div class="profile-userpic-friend">
                 <a href="" ng-click='model.userRelationship(allUser._id)'>
                     <img class="img-responsive pull-left double-left-padding" ng-src="{{model.checkSafeImage(allUser.profilePic)}}">

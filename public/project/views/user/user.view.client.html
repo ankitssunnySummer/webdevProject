@@ -1,11 +1,14 @@
 <nav class="navbar navbar-default navbar-fixed-top" xmlns="http://www.w3.org/1999/html">
     <div class="container-fluid text-blue">
-        <a class="navbar-brand no-left-padding">
-            <b class="text-white left-padding">Visiting Profile</b>
-        </a>
+        <p class="navbar-text full-width">
+            <a ng-href="#/user/{{model.user._id}}"
+               class="navbar-link">
+                <span class="glyphicon glyphicon-chevron-left text-white"></span>
+            </a>
+            <b class="left-padding text-white">UserPage</b>
+        </p>
     </div>
 </nav>
-
 <div class="col-sm-2 col-xs-3 top-padding">
     <div class ="row left-padding">
         <div class="profile-userpic">

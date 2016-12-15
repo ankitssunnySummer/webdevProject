@@ -84,19 +84,24 @@
     }
 
 
-    function FriendController($location, $routeParams, UserService, $sce) {
-        var vm            = this;
-        var userId        = $routeParams["userId"];         // friends ID
-        var uId           = $routeParams["uid"];            // logged in user
-        vm.checkSafeImage = checkSafeImage;
-        vm.logout         = logout;
-        vm.removeFriend   = removeFriend;
+    function FriendController($location, $routeParams, UserService, $sce, $route) {
+        var vm              = this;
+        var userId          = $routeParams["userId"];         // friends ID
+        var uId             = $routeParams["uid"];            // logged in user
+        vm.checkSafeImage   = checkSafeImage;
+        vm.logout           = logout;
+        vm.removeFriend     = removeFriend;
         vm.userRelationship = userRelationship;
+        vm.addComment       = addComment;
         vm.friends;
         vm.view;
         vm.friends = [];
 
         function init() {
+
+//            console.log(vm.view);
+
+
             UserService
                 .findUserById(userId)
                 .success(function (user) {
@@ -132,34 +137,29 @@
                     for (var i =0; i < data[0].friends.length ; i++) {
                         id[i] = data[0].friends[i];
                     }
-                    console.log(id);
+                    UserService
+                        .findFriendsByID(id)
+                        .success(function (users) {
+                            vm.friends = users;
+                        })
+                        .error(function (err) {
+                            console.log("Error: " +err);
+                        });
                 })
                 .error(function (err) {
                     console.log("Error: " +err);
                 });
 
-            var arr= [];
-            for(var i=0; i < id.length; i++) {
-                console.log("Inside");
-                // for each ID find the user and add it to an object array
-                UserService
-                    .findUserById(id[i])
-                    .success(function (user) {
-                        arr[i] = user;
-                        console.log(arr[i])
-                        console.log(user);
-                        console.log("Hi");
-                    })
-                    .error(function (err) {
-                        console.log("Error" + err);
-                    })
-
-                console.log(arr);
-                vm.users = arr;
-
-
-            }
-
+            UserService
+                .findAllCommentsOnUser(userId)
+                .then(
+                    function (data) {
+                        var comments = data.data;
+                        vm.comments = comments;
+                    },
+                    function (err) {
+                        console.log("error: " +err);
+                    });
         }
         init();
 
@@ -196,6 +196,25 @@
                             console.log("Error occurred while finding relationship: " +err);
                         });
             }
+        }
+
+        function addComment(commentString) {
+            comment = {
+                commentBy: vm.user,
+                commentOn: vm.view,
+                comment: commentString};
+
+            UserService
+                .createComment(comment)
+                .then(
+                    function (succ) {
+                        //success
+                        $route.reload();
+                   //     $location.url("/user/" + vm.user._id + "/friend/" + vm.view._id);
+                    },
+                    function (err) {
+                        console.log("error: " +err);
+                    });
         }
 
         function checkSafeImage(url) {
@@ -350,6 +369,52 @@
                     function (err) {
                         console.log("Error while finding all users: +" +err);
                     });
+
+            var id = [];
+            UserService
+                .findAllFriends(userId)
+                .success(function (data) {
+                    for (var i =0; i < data[0].friends.length ; i++) {
+                        id[i] = data[0].friends[i];
+                    }
+                    UserService
+                        .findFriendsByID(id)
+                        .success(function (users) {
+                            vm.friends = users;
+                        })
+                        .error(function (err) {
+                            console.log("Error: " +err);
+                        });
+                })
+                .error(function (err) {
+                    console.log("Error: " +err);
+                });
+
+
+            UserService
+                .findAllCommentsByUser(userId)
+                .then(
+                    function (data) {
+                        var comments = data.data;
+                        vm.comments = comments;
+                    },
+                    function (err) {
+                        console.log("error: " +err);
+                    });
+
+
+            UserService
+                .findAllCommentsOnUser(userId)
+                .then(
+                    function (data) {
+                        var comments = data.data;
+                        vm.commentsReceived = comments;
+                    },
+                    function (err) {
+                        console.log("error: " +err);
+                    });
+
+
         }
         init();
 

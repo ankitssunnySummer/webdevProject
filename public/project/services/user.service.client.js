@@ -14,8 +14,12 @@
             login                 : login,
             logout                : logout,
             register              : register,
+            createComment         : createComment,
+            findAllCommentsOnUser : findAllCommentsOnUser,
+            findAllCommentsByUser : findAllCommentsByUser,
             findAllUsers          : findAllUsers,
             findAllFriends        : findAllFriends,
+            findFriendsByID       : findFriendsByID,
             addFriend             : addFriend,
             removeFriend          : removeFriend,
             searchEBay            : searchEBay,
@@ -36,6 +40,9 @@
             return $http.put('/api/removeFriend/' +uId1+ '/' + uId2);
         }
 
+        function findFriendsByID(ids) {
+            return $http.get('/api/findFriendsbyId/'+ ids);
+        }
 
         function searchEBay(searchTerm) {
             return $http.get("/api/ebayRequest/"+ searchTerm);
@@ -79,5 +86,18 @@
         function  deleteUser(userId) {
             return $http.delete('/api/user/' + userId);
         }
+
+        function createComment(comment) {
+            return $http.post('/api/createComment/', comment);
+        }
+        
+        function findAllCommentsOnUser(userId) {
+            return $http.get('/api/allCommentsOnUser/' + userId);
+        }
+
+        function findAllCommentsByUser(userId) {
+            return $http.get('/api/allCommentsByUser/' + userId);
+        }
+
     }
 })();
